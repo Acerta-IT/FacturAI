@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "material-icons/iconfont/material-icons.css";
+
+:root {
+    /* Brand */
+    --color-brand: #c00000;
+
+    /* Primary */
+    --color-primary5: #172554;
+    --color-primary4: #1e40af;
+    --color-primary: #2563eb;
+    --color-primary2: #60a5fa;
+    --color-primary1: #bfdbfe;
+
+    /* Neutral */
+    --color-neutral5: #09090b;
+    --color-neutral4: #3a3a41;
+    --color-neutral: #58585f;
+    --color-neutral2: #777781;
+    --color-neutral1: #c2c2c9;
+
+    /* Secondary */
+    --color-secondary: #f7f8f9;
+
+    /* Success */
+    --color-success5: #002d03;
+    --color-success4: #006207;
+    --color-success: #00a30b;
+    --color-success2: #4de757;
+    --color-success1: #99ef9f;
+
+    /* Warning */
+    --color-warning5: #78350f;
+    --color-warning4: #b45309;
+    --color-warning: #fbbf24;
+    --color-warning2: #fcd34d;
+    --color-warning1: #fde68a;
+
+    /* Danger */
+    --color-danger5: #450a0a;
+    --color-danger4: #991b1b;
+    --color-danger: #dc2626;
+    --color-danger2: #f87171;
+    --color-danger1: #fecaca;
+
+    /* Dark */
+    --color-dark: #ffffff;
+
+    /* [class^="bg-"] {
+        background-color: var(--color-primary);
+    }
+
+    [class^="hover:bg-"] {
+        background-color: var(--color-primary);
+    }
+
+    [class^="focus:bg-"] {
+        background-color: var(--focus-color-primary);
+    }
+
+    [class^="active:bg-"] {
+        background-color: #000000;
+    } */
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: var(--color-neutral1);
+    border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.toast-success {
+    background: white; /* Verde para éxito */
+    color: var(--color-neutral4) !important;
+    border-left: 5px solid var(--color-success) !important;
+    border-radius: 5px;
+    padding: 20px 15px;
+
+    box-shadow: none !important;
+    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.25));
+}
+
+.toast-warning {
+    background: white; /* Verde para éxito */
+    color: var(--color-neutral4) !important;
+    border-left: 5px solid var(--color-warning) !important;
+    border-radius: 5px;
+    padding: 20px 15px;
+
+    box-shadow: none !important;
+    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.25));
+}
+
+.toast-danger {
+    background: white; /* Verde para éxito */
+    color: var(--color-neutral4) !important;
+    border-left: 5px solid var(--color-danger) !important;
+    border-radius: 5px;
+    padding: 20px 15px;
+    box-shadow: none !important;
+    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.25));
+}
