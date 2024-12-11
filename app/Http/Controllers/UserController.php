@@ -65,7 +65,7 @@ class UserController extends Controller
         ]);
 
         if (!$request->password) {
-            $token = Password::broker()->createToken($user);
+            $token = Password::createToken($user);
 
             // Crear la URL para restablecer la contraseña
             $resetUrl = url("/reset-password/$token?email={$user->email}");
@@ -93,7 +93,7 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'surname' => ['required', 'string', 'max:255'],
             'department' => ['required', Rule::enum(Departments::class)],
-            'rol' => ['required', Rule::enum(Rol::class)],
+            'rol' => ['required', Rule::enum(Role::class)],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => ['nullable', 'confirmed', PasswordRules::defaults()],
         ], [

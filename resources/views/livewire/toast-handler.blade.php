@@ -9,7 +9,7 @@
 
             const toast = Toastify({
                 text: message, // Usa la propiedad directamente
-                duration: 2000,
+                duration: 3000,
                 gravity: 'top',
                 position: 'right',
                 className: cssClass, // Clase CSS dinámica

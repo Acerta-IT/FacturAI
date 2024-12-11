@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
 use App\Enums\Status;
-use App\Enums\Rol;
+use App\Enums\Role;
 use Illuminate\View\View;
 use App\Enums\Departments;
 use Illuminate\Http\Request;
@@ -37,7 +37,7 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'surname' => ['required', 'string', 'max:255'],
             'department' => ['required', Rule::enum(Departments::class)],
-            'rol' => ['required', Rule::enum(Rol::class)],
+            'rol' => ['required', Rule::enum(Role::class)],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ], [

@@ -17,13 +17,13 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => 'admin'],
+            ['email' => 'admin@acerta-intranet.com'],
             [
                 'name' => 'Admin',
                 'surname' => 'User',
                 'department' => Departments::IT->value,
                 'role' => Role::Admin->value,
-                'password' => Hash::make('admin'),
+                'password' => Hash::make('Qwerty1234!'),
             ]
         );
     }

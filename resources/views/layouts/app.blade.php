@@ -24,7 +24,7 @@
 
 @include('layouts.navigation')
 
-<main class="flex-1 text-neutral4 ">
+<main class="flex-1 text-neutral4 ml-80 p-8">
     @if (isset($header))
         <header class="text-3xl shadow mb-10 font-medium">
             <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -42,13 +42,14 @@
         let statusData = @json(session('status')); // Convertir el array de sesión a JSON
         console.log(statusData.message); // Depuración en consola
         console.log(statusData.class);
-        let asd = statusData.message;
-        console.log(asd);
 
-        Livewire.dispatch('show-toast', [{
-            message: statusData.message, // Mensaje que se mostrará en el toast
-            class: statusData.class // Clase CSS asociada al toast
-        }]);
+        // Check if message and class are not null or empty
+        if (statusData.message && statusData.class) {
+            Livewire.dispatch('show-toast', [{
+                message: statusData.message, // Mensaje que se mostrará en el toast
+                class: statusData.class // Clase CSS asociada al toast
+            }]);
+        }
         @endif
     });
 </script>

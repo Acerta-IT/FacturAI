@@ -11,8 +11,8 @@
     - `icon` (string): The name of the Material Symbols icon to display alongside the link. Default: `''`.
 
     Usage Example:
-    <x-nav-link :active="request()->routeIs('dashboard')" level="2" icon="settings">
-        Dashboard
+    <x-nav-link :active="request()->routeIs('facturai.index')" level="2" icon="settings">
+        FacturAI
     </x-nav-link>
 --}}
 
@@ -30,7 +30,7 @@
 @endphp
 
 @if($level === 1)
-    <div class="px-2 pb-2">
+    <div class="px-2">
         @endif
         <div class="p-1">
             <a {{ $attributes->merge(['class' => $classes]) }}>
