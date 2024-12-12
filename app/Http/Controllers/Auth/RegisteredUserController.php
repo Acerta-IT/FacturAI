@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
-use App\Enums\Status;
-use App\Enums\Role;
+use App\enums\Status;
+use App\enums\Role;
 use Illuminate\View\View;
-use App\Enums\Departments;
+use App\enums\Departments;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;

@@ -3,8 +3,8 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Enums\Departments;
-use App\Enums\Role;
+use App\enums\Departments;
+use App\enums\Role;
 
 class FilterUsers extends Component
 {

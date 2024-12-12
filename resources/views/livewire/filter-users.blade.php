@@ -16,7 +16,7 @@
 
                     @foreach ($userDepartments as $department)
                         <option value="{{ $department->value }}">
-                            {{ \App\Enums\Departments::tryFrom($department->value)?->label() ?? 'Unknown' }}</option>
+                            {{ \App\enums\Departments::tryFrom($department->value)?->label() ?? 'Unknown' }}</option>
                     @endforeach
                 </select>
             </div>
@@ -28,7 +28,7 @@
 
                     @foreach ($userRol as $role)
                         <option value="{{ $role->value }}">
-                            {{ \App\Enums\Role::tryFrom($role->value)?->label() ?? 'Unknown' }}</option>
+                            {{ \App\enums\Role::tryFrom($role->value)?->label() ?? 'Unknown' }}</option>
                     @endforeach
                 </select>
             </div>

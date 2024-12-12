@@ -29,7 +29,7 @@
                     <select id="department" name="department"
                             class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                         <option value="" disabled selected>{{ __('Seleccionar departamento') }}</option>
-                        @foreach (\App\Enums\Departments::cases() as $department)
+                        @foreach (\App\enums\Departments::cases() as $department)
                             <option value="{{ $department->value }}"
                                 {{ old('department') == $department->value ? 'selected' : '' }}>
                                 {{ $department->label() }}
@@ -44,7 +44,7 @@
                     <select name="role" id="role"
                             class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                         <option value="" disabled selected>{{ __('Seleccionar permisos') }}</option>
-                        @foreach (\App\Enums\Role::cases() as $role)
+                        @foreach (\App\enums\Role::cases() as $role)
                             <option value="{{ $role->value }}"
                                 {{ old('role') == $role->value ? 'selected' : '' }}>
                                 {{ $role->label() }}

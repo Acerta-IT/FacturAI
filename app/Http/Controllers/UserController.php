@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 
 use App\Models\User;
-use App\Enums\Role;
-use App\Enums\Departments;
+use App\enums\Role;
+use App\enums\Departments;
 use Illuminate\Http\Request;
 use App\Mail\UserSetPassword;
 use Illuminate\Validation\Rule;

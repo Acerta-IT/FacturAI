@@ -40,10 +40,10 @@
                 <p>{{ $user->email }}</p>
             </div>
             <div class="w-1/6 text-center">
-                <p>{{ \App\Enums\Departments::tryFrom($user->department)?->label() ?? 'Unknown' }}</p>
+                <p>{{ \App\enums\Departments::tryFrom($user->department)?->label() ?? 'Unknown' }}</p>
             </div>
             <div class="w-1/6 text-center">
-                <p>{{ \App\Enums\Role::tryFrom($user->department)?->label() ?? 'Unknown' }}</p>
+                <p>{{ \App\enums\Role::tryFrom($user->department)?->label() ?? 'Unknown' }}</p>
             </div>
             <div class="w-1/6 text-center flex justify-center">
 
