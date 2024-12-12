@@ -35,13 +35,13 @@ class FacturAIController extends Controller
             if ($scriptSuccess) {
                 // Prepare the file for download
                 $config = json_decode(File::get($this->configPath), true);
-                $outputFileName = $config['excel_output_name'] . '.xlsx';
-                $outputFilePath = $directory_path . '/' . $outputFileName;
+                $filename = $client_name . '_' . $config['excel_output_name'] . '.xlsx';
+                $outputFilePath = $directory_path . '/' . $filename;
 
                 // Check if the output file exists
                 if (File::exists($outputFilePath)) {
                     // Move the file to a permanent location (e.g., public directory)
-                    $permanentFilePath = public_path('downloads/' . $outputFileName);
+                    $permanentFilePath = public_path('downloads/' . $filename);
                     File::copy($outputFilePath, $permanentFilePath);
 
                     // Return the file for download

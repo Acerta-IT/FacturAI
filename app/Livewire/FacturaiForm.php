@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 use Livewire\Component;
+use App\Jobs\RunPythonScript;
 
 class FacturaiForm extends Component
 {
@@ -17,7 +18,8 @@ class FacturaiForm extends Component
     public $clientName;
     public $tempDir;
     public $buttonDisabled = false;
-    public $fileToDownload = null;
+    public $isProcessing = false;
+    public $fileToDownload;
 
     protected $rules = [
         'clientName' => 'required|string|min:1',
@@ -60,11 +62,10 @@ class FacturaiForm extends Component
     public function execute()
     {
         $this->buttonDisabled = true;
-
         $this->validate();
 
         try {
-            // Copy each file to the temporary directory
+            // Copy files to temp directory
             foreach ($this->filePaths as $filePath) {
                 if (File::exists($filePath)) {
                     $fileName = basename($filePath);
@@ -72,20 +73,26 @@ class FacturaiForm extends Component
                 }
             }
 
-            // Execute the script with the temporary directory
-            $response = app(FacturAIController::class)->execute($this->tempDir, $this->clientName);
-            $this->fileToDownload = $response->getFile()->getPathname();
-            /* return $response; */
+            // Dispatch job
+            RunPythonScript::dispatch($this->tempDir, $this->clientName);
+            $this->isProcessing = true;
+
+            session()->flash('message', 'Procesamiento iniciado. La descarga estará disponible cuando termine.');
 
         } catch (\Exception $e) {
             session()->flash('error', $e->getMessage());
         } finally {
-            // Clean up: Delete temporary directory and its contents
-            if (isset($this->tempDir) && File::exists($this->tempDir)) {
-                File::deleteDirectory($this->tempDir);
-            }
-
             $this->buttonDisabled = false;
+        }
+    }
+
+    // Add a polling method to check if file is ready
+    public function checkFileStatus()
+    {
+        $filename = $this->clientName . '_Registros-Primarios.xlsx';
+        if (File::exists(public_path('downloads/' . $filename))) {
+            $this->fileToDownload = 'downloads/' . $filename;
+            $this->isProcessing = false;
         }
     }
 
