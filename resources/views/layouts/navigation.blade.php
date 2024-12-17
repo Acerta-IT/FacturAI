@@ -51,6 +51,16 @@
                 FacturAI
             </x-nav-link>
 
+            <x-nav-link :href="route('jobs.index')" :active="request()->routeIs('jobs.index')">
+                <x-slot name="icon">deployed_code_history</x-slot>
+                Trabajos pendientes
+            </x-nav-link>
+
+            <x-nav-link :href="route('completedJobs.index')" :active="request()->routeIs('completedJobs.index')">
+                <x-slot name="icon">check_box</x-slot>
+                Trabajos completados
+            </x-nav-link>
+
             @if(auth()->user()->role_enum === \App\enums\Role::Admin)
                 <x-nav-link :href="route('settings.index')" :active="request()->routeIs('settings.index')">
                     <x-slot name="icon">settings</x-slot>

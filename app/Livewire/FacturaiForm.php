@@ -73,8 +73,12 @@ class FacturaiForm extends Component
                 }
             }
 
+            $config_file_path = config("facturai.config_path");
+            $config_file = json_decode(File::get($config_file_path), true);
+            $filename = $this->clientName . "_" . $config_file["excel_output_name"] . ".xlsx";
+
             // Dispatch job
-            RunPythonScript::dispatch($this->tempDir, $this->clientName);
+            RunPythonScript::dispatch($this->tempDir, $this->clientName, $filename);
             $this->isProcessing = true;
 
             session()->flash('message', 'Procesamiento iniciado. La descarga estará disponible cuando termine.');

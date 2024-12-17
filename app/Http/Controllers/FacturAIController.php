@@ -9,9 +9,6 @@ use Illuminate\Support\Str;
 
 class FacturAIController extends Controller
 {
-    protected $configPath = 'C:\Repositories\ProyectoFacturasIDI\src\config.json';
-    private $path_to_script = 'C:\Repositories\ProyectoFacturasIDI\src\facturai.py';
-
     public function index()
     {
         return view('facturai');
@@ -26,7 +23,7 @@ class FacturAIController extends Controller
             // Execute the Python script
             $command = sprintf(
                 'python "%s"',
-                $this->path_to_script
+                config("facturai.script_path")
             );
 
             $scriptSuccess = exec($command);
@@ -34,7 +31,7 @@ class FacturAIController extends Controller
             // Check if the script executed successfully
             if ($scriptSuccess) {
                 // Prepare the file for download
-                $config = json_decode(File::get($this->configPath), true);
+                $config = json_decode(File::get(config("facturai.config_path")), true);
                 $filename = $client_name . '_' . $config['excel_output_name'] . '.xlsx';
                 $outputFilePath = $directory_path . '/' . $filename;
 
@@ -160,13 +157,13 @@ class FacturAIController extends Controller
     private function updateConfig($directoryPath, $clientName)
     {
         // Read the current config
-        $config = json_decode(File::get($this->configPath), true);
+        $config = json_decode(File::get(config("facturai.config_path")), true);
 
         // Update the directory path and client name
         $config['directory_path'] = $directoryPath;
         $config['client_name'] = $clientName;
 
         // Save the updated config
-        File::put($this->configPath, json_encode($config, JSON_PRETTY_PRINT));
+        File::put(config("facturai.config_path"), json_encode($config, JSON_PRETTY_PRINT));
     }
 }

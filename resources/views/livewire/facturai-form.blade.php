@@ -3,12 +3,6 @@
         @csrf
 
         <div class="mb-8">
-            {{-- <x-file-input id="directory_path"
-                wire:model="directory_path"
-                name="directory_path[]"
-                label="Ruta del directorio"
-                description="En esta ruta deben estar las facturas y el AnexoII"
-            /> --}}
             <livewire:file-input />
             @error('filePaths')
                 <span class="text-red-500 text-sm">{{ $message }}</span>

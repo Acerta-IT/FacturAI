@@ -4,9 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\FacturAIController;
+use App\Http\Controllers\JobController;
 use App\Http\Middleware\Admin;
-
-
+use App\Http\Controllers\CompletedJobController;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', function () {
@@ -36,6 +36,10 @@ Route::middleware('auth')->group(function () {
             'class' => 'toast-danger'
         ]);
     });
+
+    Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
+    Route::get('/completedJobs', [CompletedJobController::class, 'index'])->name('completedJobs.index');
+
 
 });
 

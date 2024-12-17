@@ -24,7 +24,7 @@
 
 @include('layouts.navigation')
 
-<main class="flex-1 text-neutral4 ml-80 p-8">
+<main class="flex-1 text-neutral4 ml-80 p-8 ">
     @if (isset($header))
         <header class="text-3xl shadow mb-10 font-medium">
             <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -33,6 +33,8 @@
         </header>
     @endif
     {{ $slot }}
+    <div class="bottom-0 h-20 w-full bg-white"> {{-- to add margin to the bottom of the page --}}
+    </div>
 </main>
 
 @livewireScripts

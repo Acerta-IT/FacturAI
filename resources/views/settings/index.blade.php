@@ -154,7 +154,7 @@
         </div>
 
         <!-- Buttons Container -->
-        <div class="flex items-center justify-end mt-8 mb-20 space-x-4">
+        <div class="flex items-center justify-end mt-8 space-x-4">
             <x-danger-button onclick="document.getElementById('reset-form').submit()">
                 {{ __('Restaurar cambios') }}
             </x-danger-button>
