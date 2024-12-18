@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('completed_jobs', function (Blueprint $table) {
             $table->id();
             $table->string('client_name');
-            $table->timestamp('completed_at');
-            $table->timestamp('created_at');
-            $table->timestamp('reserved_at');
+            $table->timestamp('completed_at')->nullable();
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('reserved_at')->nullable();
             $table->string('output_filename')->nullable();
         });
     }
