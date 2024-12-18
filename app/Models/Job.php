@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class Job extends Model
 {
@@ -20,8 +20,16 @@ class Job extends Model
 
     public function getClientNameAttribute()
     {
-        $command = unserialize($this->payload['data']['command']);
-        return $command->clientName;
+        try {
+            $command = unserialize($this->payload['data']['command']);
+            return $command->clientName ?? 'Unknown Client';
+        } catch (\Exception $e) {
+            Log::error('Error getting client name:', [
+                'error' => $e->getMessage(),
+                'payload' => $this->payload
+            ]);
+            return 'Unknown Client';
+        }
     }
 
     public function getProcessingAttribute()

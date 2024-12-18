@@ -3,10 +3,8 @@
 namespace App\Livewire;
 
 use Livewire\WithFileUploads;
-use App\Http\Controllers\FacturAIController;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
-
+use App\Events\JobListUpdateEvent;
 use Livewire\Component;
 use App\Jobs\RunPythonScript;
 
@@ -18,8 +16,8 @@ class FacturaiForm extends Component
     public $clientName;
     public $tempDir;
     public $buttonDisabled = false;
-    public $isProcessing = false;
     public $fileToDownload;
+    public $outputFilename;
 
     protected $rules = [
         'clientName' => 'required|string|min:1',
@@ -61,7 +59,6 @@ class FacturaiForm extends Component
 
     public function execute()
     {
-        $this->buttonDisabled = true;
         $this->validate();
 
         try {
@@ -75,28 +72,26 @@ class FacturaiForm extends Component
 
             $config_file_path = config("facturai.config_path");
             $config_file = json_decode(File::get($config_file_path), true);
-            $filename = $this->clientName . "_" . $config_file["excel_output_name"] . ".xlsx";
+            $outputFilename = $config_file["excel_output_name"];
+            $filename = $this->clientName . "_" . $outputFilename . ".xlsx";
 
             // Dispatch job
             RunPythonScript::dispatch($this->tempDir, $this->clientName, $filename);
-            $this->isProcessing = true;
+            event(new JobListUpdateEvent());
 
-            session()->flash('message', 'Procesamiento iniciado. La descarga estará disponible cuando termine.');
+            $this->clientName = "";
+            $this->dispatch('clearFiles');
+
+            $this->dispatch('show-toast', [
+                'message' => 'Procesamiento iniciado. La descarga estará disponible cuando termine.',
+                'class' => 'toast-success'
+            ]);
 
         } catch (\Exception $e) {
-            session()->flash('error', $e->getMessage());
-        } finally {
-            $this->buttonDisabled = false;
-        }
-    }
-
-    // Add a polling method to check if file is ready
-    public function checkFileStatus()
-    {
-        $filename = $this->clientName . '_Registros-Primarios.xlsx';
-        if (File::exists(public_path('downloads/' . $filename))) {
-            $this->fileToDownload = 'downloads/' . $filename;
-            $this->isProcessing = false;
+            $this->dispatch('show-toast', [
+                'message' => $e->getMessage(),
+                'class' => 'toast-error'
+            ]);
         }
     }
 

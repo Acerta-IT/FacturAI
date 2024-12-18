@@ -1,4 +1,4 @@
-<div wire:poll.3s>
+<div>
     <div class="flex pb-2 border-b border-gray-300">
         <div class="w-1/5 text-center">
             <p>ID</p>

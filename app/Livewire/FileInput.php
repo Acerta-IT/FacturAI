@@ -13,11 +13,20 @@ class FileInput extends Component
     public $files;
     public $isUploading = false;
 
-    /* public function updatingFiles()
+    protected $listeners = ['clearFiles' => 'clearFiles'];
+
+    public function uploadStarted()
     {
         $this->isUploading = true;
-        $this->dispatch('uploadStarted');
-    } */
+    }
+
+    public function clearFiles()
+    {
+        $this->files = null;
+        $this->isUploading = false;
+        $this->dispatch('filesSelected', filePaths: [], tempDir: '');
+        $this->reset('files');
+    }
 
     public function updatedFiles()
     {

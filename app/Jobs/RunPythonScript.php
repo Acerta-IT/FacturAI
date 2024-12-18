@@ -12,6 +12,8 @@ use App\Http\Controllers\FacturAIController;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
+use App\Events\JobListUpdateEvent;
+use App\Events\CompletedJobListUpdateEvent;
 
 class RunPythonScript implements ShouldQueue
 {
@@ -34,14 +36,13 @@ class RunPythonScript implements ShouldQueue
 
             Log::info('Running Python script', [
                 'job_id' => $jobId,
-                'created_at' => $job->created_at,
-                'reserved_at' => $job->reserved_at
+                'client_name' => $this->clientName,
+                'status' => 'starting'
             ]);
 
             $controller = new FacturAIController();
             $controller->execute($this->tempDir, $this->clientName);
 
-            // Record successful completion using the job's actual creation time
             DB::table('completed_jobs')->insert([
                 'client_name' => $this->clientName,
                 'created_at' => Carbon::createFromTimestamp($job->created_at)->setTimezone('Europe/Madrid'),
@@ -51,13 +52,15 @@ class RunPythonScript implements ShouldQueue
             ]);
 
         } catch (\Exception $e) {
+            event(new JobListUpdateEvent());
             throw $e;
         } finally {
-            // Clean up the temporary directory
             if (File::exists($this->tempDir)) {
                 File::deleteDirectory($this->tempDir);
             }
-        }
 
+            event(new JobListUpdateEvent());
+            event(new CompletedJobListUpdateEvent());
+        }
     }
 }

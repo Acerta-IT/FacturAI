@@ -2,20 +2,24 @@
 
 namespace App\Livewire;
 
+use App\Models\Job;
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\Job;
 
 class JobsList extends Component
 {
     use WithPagination;
 
+    protected $listeners = [
+        'echo:jobs,JobListUpdateEvent' => '$refresh'
+    ];
+
     public function render()
     {
+        $pendingJobs = Job::orderBy('created_at', 'asc')->paginate(10);
+
         return view('livewire.jobs-list', [
-            'pendingJobs' => Job::where('reserved_at', null)
-                ->orderBy('created_at', 'desc')
-                ->paginate(10)
+            'pendingJobs' => $pendingJobs
         ]);
     }
 }

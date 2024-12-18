@@ -111,7 +111,6 @@ class SettingsController extends Controller
                 'class' => 'toast-success'
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            /* dd($e->errors()); */
             return redirect()->back()
                 ->withErrors($e->errors())
                 ->withInput($request->all());  // Explicitly pass all input data
