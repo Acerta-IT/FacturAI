@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\File;
 use App\Events\JobListUpdateEvent;
 use Livewire\Component;
 use App\Jobs\RunPythonScript;
+use Illuminate\Support\Facades\Log;
 
 class FacturaiForm extends Component
 {
@@ -53,6 +54,8 @@ class FacturaiForm extends Component
 
     public function updateDirectoryPath($filePaths, $tempDir)
     {
+        Log::info('File paths: ' . json_encode($filePaths));
+        Log::info('Temp dir: ' . $tempDir);
         $this->filePaths = $filePaths;
         $this->tempDir = $tempDir;
     }

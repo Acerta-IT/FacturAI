@@ -56,7 +56,10 @@ class RunPythonScript implements ShouldQueue
             throw $e;
         } finally {
             if (File::exists($this->tempDir)) {
-                File::deleteDirectory($this->tempDir);
+                Log::info('Deleting temp dir: ' . $this->tempDir);
+                /* File::deleteDirectory($this->tempDir); */
+            } else {
+                Log::info('Temp dir not found: ' . $this->tempDir);
             }
 
             event(new JobListUpdateEvent());

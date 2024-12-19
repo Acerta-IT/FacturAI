@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\File;
-
+use Illuminate\Support\Facades\Log;
 class FacturAIController extends Controller
 {
     public function index()
@@ -34,6 +34,7 @@ class FacturAIController extends Controller
 
                 // Check if the output file exists
                 if (File::exists($outputFilePath)) {
+                    Log::info('Output file exists: ' . $outputFilePath);
                     // Move the file to a permanent location (e.g., public directory)
                     $permanentFilePath = public_path('downloads/' . $filename);
                     File::copy($outputFilePath, $permanentFilePath);
@@ -41,6 +42,7 @@ class FacturAIController extends Controller
                     // Return the file for download
                     return response()->download($permanentFilePath);
                 } else {
+                    Log::info('Output file does not exist: ' . $outputFilePath);
                     return redirect()->route('facturai.index')->with('status', [
                         'message' => 'El archivo de salida no se ha podido generar.',
                         'class' => 'toast-danger'

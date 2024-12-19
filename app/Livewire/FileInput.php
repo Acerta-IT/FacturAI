@@ -6,7 +6,7 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
-
+use Illuminate\Support\Facades\Log;
 class FileInput extends Component
 {
     use WithFileUploads;
@@ -35,11 +35,15 @@ class FileInput extends Component
             $tempDir = storage_path('app/temp/' . Str::uuid());
             File::makeDirectory($tempDir, 0755, true);
 
+            Log::info('Temp dir: ' . $tempDir);
+
             $filePaths = collect($this->files)->map(function($file) use ($tempDir) {
                 $newPath = $tempDir . '/' . $file->getClientOriginalName();
                 rename($file->getRealPath(), $newPath);
                 return $newPath;
             })->toArray();
+
+            Log::info('File paths count: ' . count($filePaths));
 
             $this->dispatch('filesSelected', filePaths: $filePaths, tempDir: $tempDir);
         } finally {
