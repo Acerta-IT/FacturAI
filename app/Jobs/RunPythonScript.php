@@ -23,7 +23,12 @@ class RunPythonScript implements ShouldQueue
         public string $tempDir,
         public string $clientName,
         public string $outputFilename
-    ) {}
+    ) {
+        Log::info('a - Inside constructor');
+        Log::info('a - Temp dir: ' . $tempDir);
+        Log::info('a - Client name: ' . $clientName);
+        Log::info('a - Output filename: ' . $outputFilename);
+    }
 
     public function handle()
     {
@@ -37,7 +42,9 @@ class RunPythonScript implements ShouldQueue
             Log::info('Running Python script', [
                 'job_id' => $jobId,
                 'client_name' => $this->clientName,
-                'status' => 'starting'
+                'status' => 'starting',
+                'temp_dir' => $this->tempDir,
+                'output_filename' => $this->outputFilename
             ]);
 
             $controller = new FacturAIController();

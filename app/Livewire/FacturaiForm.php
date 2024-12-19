@@ -54,14 +54,16 @@ class FacturaiForm extends Component
 
     public function updateDirectoryPath($filePaths, $tempDir)
     {
-        Log::info('File paths: ' . json_encode($filePaths));
-        Log::info('Temp dir: ' . $tempDir);
+        Log::info('b - inside updateDirectoryPath');
+        Log::info('b - File paths: ' . json_encode($filePaths));
+        Log::info('b - Temp dir: ' . $tempDir);
         $this->filePaths = $filePaths;
         $this->tempDir = $tempDir;
     }
 
     public function execute()
     {
+        Log::info('inside execute');
         $this->validate();
 
         try {
@@ -79,7 +81,14 @@ class FacturaiForm extends Component
             $filename = $this->clientName . "_" . $outputFilename . ".xlsx";
 
             // Dispatch job
-            RunPythonScript::dispatch($this->tempDir, $this->clientName, $filename);
+            Log::info('Dispatching job');
+            // In production, as it seems that the events travel faster than the job is executed, we need to copy the variables to local variables
+            // This is because this method triggers the clearFiles event, that ends up calling the updateDirectoryPath method, which sets the filePaths and tempDir to null,
+            // and the job is executed with null values
+            $auxTempDir = $this->tempDir;
+            $auxClientName = $this->clientName;
+            $auxFilename = $filename;
+            RunPythonScript::dispatch($auxTempDir, $auxClientName, $auxFilename);
             event(new JobListUpdateEvent());
 
             $this->clientName = "";

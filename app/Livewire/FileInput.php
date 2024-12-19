@@ -35,7 +35,7 @@ class FileInput extends Component
             $tempDir = storage_path('app/temp/' . Str::uuid());
             File::makeDirectory($tempDir, 0755, true);
 
-            Log::info('Temp dir: ' . $tempDir);
+            Log::info('a- Temp dir: ' . $tempDir);
 
             $filePaths = collect($this->files)->map(function($file) use ($tempDir) {
                 $newPath = $tempDir . '/' . $file->getClientOriginalName();
@@ -43,7 +43,9 @@ class FileInput extends Component
                 return $newPath;
             })->toArray();
 
-            Log::info('File paths count: ' . count($filePaths));
+            Log::info('a - File paths count: ' . count($filePaths));
+
+            Log::info('a - File paths: ' . json_encode($filePaths));
 
             $this->dispatch('filesSelected', filePaths: $filePaths, tempDir: $tempDir);
         } finally {
