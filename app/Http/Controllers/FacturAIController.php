@@ -23,10 +23,16 @@ class FacturAIController extends Controller
                 config("facturai.script_path")
             );
 
-            $scriptSuccess = exec($command);
-
+            // Get the output
+            $scriptOutput = [];
+            $scriptResult = -1;
+            exec($command, $scriptOutput, $scriptResult);
+            Log::info('----- Output from script -----');
+            Log::info('Script output: ' . implode("\n", $scriptOutput));
+            Log::info('----- End of output from script -----');
+            Log::info('Script result: ' . $scriptResult);
             // Check if the script executed successfully
-            if ($scriptSuccess) {
+            if ($scriptResult === 0) {
                 // Prepare the file for download
                 $config = json_decode(File::get(config("facturai.config_path")), true);
                 $filename = $client_name . '_' . $config['excel_output_name'] . '.xlsx';
