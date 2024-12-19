@@ -27,6 +27,7 @@ class FacturAIController extends Controller
             $scriptOutput = [];
             $scriptResult = -1;
             exec($command, $scriptOutput, $scriptResult);
+            Log::info("Command: " . $command);
             Log::info('----- Output from script -----');
             Log::info('Script output: ' . implode("\n", $scriptOutput));
             Log::info('----- End of output from script -----');
