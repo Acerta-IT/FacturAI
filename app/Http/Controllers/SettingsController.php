@@ -7,12 +7,9 @@ use Illuminate\Support\Facades\File;
 
 class SettingsController extends Controller
 {
-    protected $configPath = 'C:\Repositories\ProyectoFacturasIDI\src\config.json';
-    protected $defaultConfigPath = 'C:\Repositories\ProyectoFacturasIDI\src\config_default.json';
-
     public function index()
     {
-        $config = json_decode(File::get($this->configPath), true);
+        $config = json_decode(File::get(config("facturai.script_path")), true);
         return view('settings.index', compact('config'));
     }
 
@@ -70,7 +67,7 @@ class SettingsController extends Controller
             ]);
 
             // Read current config to maintain structure
-            $config = json_decode(File::get($this->configPath), true);
+            $config = json_decode(File::get(config('facturai.config_path')), true);
 
             // Update simple fields
             $config['template_path'] = $validated['template_path'];
@@ -104,7 +101,7 @@ class SettingsController extends Controller
             $config['sheet_names'] = $sheets;
 
             // Save the updated config
-            File::put($this->configPath, json_encode($config, JSON_PRETTY_PRINT));
+            File::put(config('facturai.config_path'), json_encode($config, JSON_PRETTY_PRINT));
 
             return redirect()->route('settings.index')->with('status', [
                 'message' => 'Configuración actualizada correctamente.',
@@ -124,8 +121,8 @@ class SettingsController extends Controller
      */
     public function reset()
     {
-        $defaultConfig = File::get($this->defaultConfigPath);
-        File::put($this->configPath, $defaultConfig);
+        $defaultConfig = File::get(config('facturai.config_path'));
+        File::put(config('facturai.config_path'), $defaultConfig);
 
         return redirect()->route('settings.index')->with('status', [
             'message' => 'Configuración restablecida a los valores predeterminados.',
@@ -145,8 +142,8 @@ class SettingsController extends Controller
 
         // If the update was successful, copy to config_default.json
         if ($response->getSession()->has('status') && $response->getSession()->get('status')['class'] === 'toast-success') {
-            $currentConfig = File::get($this->configPath);
-            File::put($this->defaultConfigPath, $currentConfig);
+            $currentConfig = File::get(config('facturai.config_path'));
+            File::put(config('facturai.config_path_default'), $currentConfig);
 
             return redirect()->route('settings.index')->with('status', [
                 'message' => 'Configuración actual guardada como predeterminada.',
