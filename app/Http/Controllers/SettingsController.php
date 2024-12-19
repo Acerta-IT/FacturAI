@@ -9,7 +9,7 @@ class SettingsController extends Controller
 {
     public function index()
     {
-        $config = json_decode(File::get(config("facturai.script_path")), true);
+        $config = json_decode(File::get(config("facturai.config_path")), true);
         return view('settings.index', compact('config'));
     }
 
@@ -121,7 +121,7 @@ class SettingsController extends Controller
      */
     public function reset()
     {
-        $defaultConfig = File::get(config('facturai.config_path'));
+        $defaultConfig = File::get(config('facturai.default_config_path'));
         File::put(config('facturai.config_path'), $defaultConfig);
 
         return redirect()->route('settings.index')->with('status', [
@@ -143,7 +143,7 @@ class SettingsController extends Controller
         // If the update was successful, copy to config_default.json
         if ($response->getSession()->has('status') && $response->getSession()->get('status')['class'] === 'toast-success') {
             $currentConfig = File::get(config('facturai.config_path'));
-            File::put(config('facturai.config_path_default'), $currentConfig);
+            File::put(config('facturai.default_config_path'), $currentConfig);
 
             return redirect()->route('settings.index')->with('status', [
                 'message' => 'Configuración actual guardada como predeterminada.',
