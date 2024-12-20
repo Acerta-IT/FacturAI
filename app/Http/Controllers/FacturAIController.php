@@ -19,7 +19,8 @@ class FacturAIController extends Controller
 
             // Execute the Python script
             $command = sprintf(
-                'python "%s"',
+                '%s "%s"',
+                config("facturai.python_command"),
                 config("facturai.script_path")
             );
 
