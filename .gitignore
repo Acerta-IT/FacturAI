@@ -46,3 +46,5 @@ package.json
 phpinfo.php
 
 docs-11.x/
+
+public/files/

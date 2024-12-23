@@ -4,12 +4,14 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+
 class FileInput extends Component
 {
     use WithFileUploads;
+
     public $files;
     public $isUploading = false;
 
@@ -24,33 +26,46 @@ class FileInput extends Component
     {
         $this->files = null;
         $this->isUploading = false;
-        $this->dispatch('filesSelected', filePaths: [], tempDir: '');
+        $this->dispatch('filesSelected', filePaths: [], livewireTempDir: '');
         $this->reset('files');
     }
 
     public function updatedFiles()
     {
         try {
-            // Create a temporary directory
-            $tempDir = storage_path('app/temp/' . Str::uuid());
-            File::makeDirectory($tempDir, 0755, true);
+            // Create a unique folder for this batch of files
+            $batchId = Str::uuid();
+            $baseDir = storage_path('app/private/livewire-tmp');
+            $batchDir = $baseDir . '/' . $batchId;
 
-            Log::info('a- Temp dir: ' . $tempDir);
+            // Ensure the directory exists
+            if (!File::exists($batchDir)) {
+                File::makeDirectory($batchDir, 0755, true);
+            }
 
-            $filePaths = collect($this->files)->map(function($file) use ($tempDir) {
-                $newPath = $tempDir . '/' . $file->getClientOriginalName();
-                rename($file->getRealPath(), $newPath);
+            $filePaths = collect($this->files)->map(function($file) use ($batchDir) {
+                $originalName = $file->getClientOriginalName();
+                $currentPath = $file->getRealPath();
+                $newPath = $batchDir . '/' . $originalName;
+
+                // Rename the file to its original name in the batch directory
+                rename($currentPath, $newPath);
+
                 return $newPath;
             })->toArray();
 
-            Log::info('a - File paths count: ' . count($filePaths));
+            Log::info('Files renamed in batch directory: ' . json_encode([
+                'batchDir' => $batchDir
+            ]));
 
-            Log::info('a - File paths: ' . json_encode($filePaths));
+            $this->dispatch('filesSelected', filePaths: $filePaths, livewireTempDir: $batchDir);
+            $this->dispatch('uploadFinished');
 
-            $this->dispatch('filesSelected', filePaths: $filePaths, tempDir: $tempDir);
+        } catch (\Exception $e) {
+            Log::error('Error handling files: ' . $e->getMessage());
+            throw $e;
         } finally {
             $this->isUploading = false;
-            $this->dispatch('uploadFinished');
         }
     }
 

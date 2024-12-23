@@ -11,11 +11,11 @@ class FacturAIController extends Controller
         return view('facturai');
     }
 
-    public function execute($directory_path, $client_name)
+    public function execute($project_dir, $client_name, $project_id)
     {
         try {
-            // Update the config with the temporary directory path
-            $this->updateConfig($directory_path, $client_name);
+            // Update the config with the project directory
+            $this->updateConfig($project_dir, $client_name, $project_id);
 
             // Execute the Python script
             $command = sprintf(
@@ -37,8 +37,8 @@ class FacturAIController extends Controller
             if ($scriptResult === 0) {
                 // Prepare the file for download
                 $config = json_decode(File::get(config("facturai.config_path")), true);
-                $filename = $client_name . '_' . $config['excel_output_name'] . '.xlsx';
-                $outputFilePath = $directory_path . '/' . $filename;
+                $filename = $project_id . '_' . $config['excel_output_name'] . '.xlsx';
+                $outputFilePath = $project_dir . '/' . $filename;
 
                 // Check if the output file exists
                 if (File::exists($outputFilePath)) {
@@ -71,15 +71,15 @@ class FacturAIController extends Controller
         }
     }
 
-    private function updateConfig($directoryPath, $clientName)
+    private function updateConfig($project_dir, $clientName, $projectId)
     {
         // Read the current config
         $config = json_decode(File::get(config("facturai.config_path")), true);
 
         // Update the directory path and client name
-        $config['directory_path'] = $directoryPath;
+        $config['directory_path'] = $project_dir;
         $config['client_name'] = $clientName;
-
+        $config['project_id'] = $projectId;
         // Save the updated config
         File::put(config("facturai.config_path"), json_encode($config, JSON_PRETTY_PRINT));
     }

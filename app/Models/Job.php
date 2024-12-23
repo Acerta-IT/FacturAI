@@ -16,7 +16,7 @@ class Job extends Model
         'reserved_at' => 'datetime'
     ];
 
-    protected $appends = ['clientName', 'processing'];
+    protected $appends = ['clientName', 'processing', 'projectId'];
 
     public function getClientNameAttribute()
     {
@@ -35,5 +35,10 @@ class Job extends Model
     public function getProcessingAttribute()
     {
         return !is_null($this->reserved_at);
+    }
+
+    public function getProjectIdAttribute()
+    {
+        return $this->payload['data']['command']->projectId ?? null;
     }
 }

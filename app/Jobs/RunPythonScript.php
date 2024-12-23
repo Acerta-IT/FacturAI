@@ -20,14 +20,16 @@ class RunPythonScript implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
-        public string $tempDir,
+        public string $projectDir,
         public string $clientName,
-        public string $outputFilename
+        public string $outputFilename,
+        public string $projectId
     ) {
         Log::info('a - Inside constructor');
-        Log::info('a - Temp dir: ' . $tempDir);
+        Log::info('a - Temp dir: ' . $projectDir);
         Log::info('a - Client name: ' . $clientName);
         Log::info('a - Output filename: ' . $outputFilename);
+        Log::info('a - Project ID: ' . $projectId);
     }
 
     public function handle()
@@ -43,32 +45,27 @@ class RunPythonScript implements ShouldQueue
                 'job_id' => $jobId,
                 'client_name' => $this->clientName,
                 'status' => 'starting',
-                'temp_dir' => $this->tempDir,
-                'output_filename' => $this->outputFilename
+                'temp_dir' => $this->projectDir,
+                'output_filename' => $this->outputFilename,
+                'project_id' => $this->projectId
             ]);
 
             $controller = new FacturAIController();
-            $controller->execute($this->tempDir, $this->clientName);
+            $controller->execute($this->projectDir, $this->clientName, $this->projectId);
 
             DB::table('completed_jobs')->insert([
                 'client_name' => $this->clientName,
                 'created_at' => Carbon::createFromTimestamp($job->created_at)->setTimezone('Europe/Madrid'),
                 'completed_at' => Carbon::now()->setTimezone('Europe/Madrid'),
                 'reserved_at' => Carbon::createFromTimestamp($job->reserved_at)->setTimezone('Europe/Madrid'),
-                'output_filename' => $this->outputFilename
+                'output_filename' => $this->outputFilename,
+                'project_id' => $this->projectId
             ]);
 
         } catch (\Exception $e) {
             event(new JobListUpdateEvent());
             throw $e;
         } finally {
-            if (File::exists($this->tempDir)) {
-                Log::info('Deleting temp dir: ' . $this->tempDir);
-                /* File::deleteDirectory($this->tempDir); */
-            } else {
-                Log::info('Temp dir not found: ' . $this->tempDir);
-            }
-
             event(new JobListUpdateEvent());
             event(new CompletedJobListUpdateEvent());
         }

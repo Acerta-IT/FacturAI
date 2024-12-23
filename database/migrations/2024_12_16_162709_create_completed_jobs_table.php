@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamp('created_at')->nullable();
             $table->timestamp('reserved_at')->nullable();
             $table->string('output_filename')->nullable();
+            $table->string('project_id')->nullable();
         });
     }
 

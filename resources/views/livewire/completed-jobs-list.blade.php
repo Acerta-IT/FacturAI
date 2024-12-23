@@ -1,13 +1,13 @@
 <div>
     <div class="flex pb-2 border-b border-gray-300">
         <div class="w-1/5 text-center">
+            <p>ID Proyecto</p>
+        </div>
+        <div class="w-1/5 text-center">
             <p>Cliente</p>
         </div>
         <div class="w-1/5 text-center">
             <p>Creado</p>
-        </div>
-        <div class="w-1/5 text-center">
-            <p>Finalizado</p>
         </div>
         <div class="w-1/5 text-center">
             <p>Duración</p>
@@ -20,13 +20,13 @@
     @forelse ($completedJobs as $job)
         <div class="flex items-center py-2 border-b border-gray-200">
             <div class="w-1/5 text-center">
+                <p>{{ $job->project_id }}</p>
+            </div>
+            <div class="w-1/5 text-center">
                 <p>{{ $job->client_name }}</p>
             </div>
             <div class="w-1/5 text-center">
                 <p>{{ date('d-m-Y H:i', strtotime($job->created_at)) }}</p>
-            </div>
-            <div class="w-1/5 text-center">
-                <p>{{ date('d-m-Y H:i', strtotime($job->completed_at)) }}</p>
             </div>
             <div class="w-1/5 text-center">
                 <p>{{ \Carbon\Carbon::parse($job->reserved_at)->diffForHumans($job->completed_at, true) }}</p>

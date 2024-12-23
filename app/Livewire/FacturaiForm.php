@@ -15,13 +15,15 @@ class FacturaiForm extends Component
 
     public $filePaths = [];
     public $clientName;
-    public $tempDir;
+    public $projectId;
+    public $livewireTempDir;
     public $buttonDisabled = false;
     public $fileToDownload;
     public $outputFilename;
 
     protected $rules = [
         'clientName' => 'required|string|min:1',
+        'projectId' => 'required|string|min:1',
         'filePaths' => 'required|array|min:1',
         'filePaths.*' => 'string',
     ];
@@ -38,6 +40,9 @@ class FacturaiForm extends Component
         'clientName.required' => 'El nombre del cliente es obligatorio.',
         'clientName.string' => 'El nombre del cliente debe ser texto.',
         'clientName.min' => 'El nombre del cliente no puede estar vacío.',
+        'projectId.required' => 'El ID del proyecto es obligatorio.',
+        'projectId.string' => 'El ID del proyecto debe ser texto.',
+        'projectId.min' => 'El ID del proyecto no puede estar vacío.',
     ];
 
     protected $listeners = ['filesSelected' => 'updateDirectoryPath', 'uploadStarted' => 'uploadStarted', 'uploadFinished' => 'uploadFinished'];
@@ -52,46 +57,50 @@ class FacturaiForm extends Component
         $this->buttonDisabled = false;
     }
 
-    public function updateDirectoryPath($filePaths, $tempDir)
+    public function updateDirectoryPath($filePaths, $livewireTempDir)
     {
         Log::info('b - inside updateDirectoryPath');
         Log::info('b - File paths: ' . json_encode($filePaths));
-        Log::info('b - Temp dir: ' . $tempDir);
+        Log::info('b - Temp dir: ' . $livewireTempDir);
         $this->filePaths = $filePaths;
-        $this->tempDir = $tempDir;
+        $this->livewireTempDir = $livewireTempDir;
     }
 
     public function execute()
     {
-        Log::info('inside execute');
         $this->validate();
 
         try {
-            // Copy files to temp directory
+            // Create a permanent directory in public/files/{projectId}
+            $project_dir = public_path('files/' . $this->projectId);
+
+            // Ensure the directory exists
+            if (!File::exists($project_dir)) {
+                File::makeDirectory($project_dir, 0755, true);
+            }
+
+            // Copy files from temp to permanent directory
             foreach ($this->filePaths as $filePath) {
                 if (File::exists($filePath)) {
                     $fileName = basename($filePath);
-                    File::copy($filePath, $this->tempDir . '/' . $fileName);
+                    File::copy($filePath, $project_dir . '/' . $fileName);
                 }
             }
 
+            // Get config values
             $config_file_path = config("facturai.config_path");
             $config_file = json_decode(File::get($config_file_path), true);
             $outputFilename = $config_file["excel_output_name"];
-            $filename = $this->clientName . "_" . $outputFilename . ".xlsx";
+            $filename = $this->projectId . "_" . $outputFilename . ".xlsx";
 
-            // Dispatch job
-            Log::info('Dispatching job');
-            // In production, as it seems that the events travel faster than the job is executed, we need to copy the variables to local variables
-            // This is because this method triggers the clearFiles event, that ends up calling the updateDirectoryPath method, which sets the filePaths and tempDir to null,
-            // and the job is executed with null values
-            $auxTempDir = $this->tempDir;
-            $auxClientName = $this->clientName;
-            $auxFilename = $filename;
-            RunPythonScript::dispatch($auxTempDir, $auxClientName, $auxFilename);
+            // Dispatch job with permanent directory path
+            Log::info('Dispatching job with client directory: ' . $project_dir);
+            RunPythonScript::dispatch($project_dir, $this->clientName, $filename, $this->projectId);
             event(new JobListUpdateEvent());
 
+            // Clear form after successful dispatch
             $this->clientName = "";
+            $this->projectId = "";
             $this->dispatch('clearFiles');
 
             $this->dispatch('show-toast', [
@@ -100,6 +109,7 @@ class FacturaiForm extends Component
             ]);
 
         } catch (\Exception $e) {
+            Log::error('Error in execute: ' . $e->getMessage());
             $this->dispatch('show-toast', [
                 'message' => $e->getMessage(),
                 'class' => 'toast-error'
