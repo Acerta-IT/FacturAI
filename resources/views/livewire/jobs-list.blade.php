@@ -1,7 +1,7 @@
 <div>
     <div class="flex pb-2 border-b border-gray-300">
         <div class="w-1/5 text-center">
-            <p>ID</p>
+            <p>ID Proyecto</p>
         </div>
         <div class="w-1/5 text-center">
             <p>Cliente</p>
@@ -20,7 +20,7 @@
     @forelse ($pendingJobs as $job)
         <div class="flex items-center py-2 border-b border-gray-200">
             <div class="w-1/5 text-center">
-                <p>{{ $job->id }}</p>
+                <p>{{ $job->projectId }}</p>
             </div>
             <div class="w-1/5 text-center">
                 <p>{{ $job->clientName }}</p>

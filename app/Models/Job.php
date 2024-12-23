@@ -39,6 +39,15 @@ class Job extends Model
 
     public function getProjectIdAttribute()
     {
-        return $this->payload['data']['command']->projectId ?? null;
+        try {
+            $command = unserialize($this->payload['data']['command']);
+            return $command->projectId ?? 'Unknown Project';
+        } catch (\Exception $e) {
+            Log::error('Error getting project id:', [
+                'error' => $e->getMessage(),
+                'payload' => $this->payload
+            ]);
+            return 'Unknown Project';
+        }
     }
 }
