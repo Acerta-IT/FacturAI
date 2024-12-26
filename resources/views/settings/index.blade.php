@@ -19,6 +19,16 @@
                 @endif --}}
 
                 <div class="mb-4">
+                    <x-input-label for="public_files_path" :value="__('Ruta pública de archivos')" />
+                    <x-text-input id="public_files_path"
+                        class="block mt-1 w-full"
+                        type="text"
+                        name="public_files_path"
+                        :value="old('public_files_path', $config['public_files_path'])" />
+                    <x-input-error :messages="$errors->get('public_files_path')" class="mt-2" />
+                </div>
+
+                <div class="mb-4">
                     <x-input-label for="template_path" :value="__('Ruta de la plantilla de los Regsitros Primarios')" />
                     <x-text-input id="template_path" class="block mt-1 w-full"
                         type="text"
@@ -65,6 +75,16 @@
                     <textarea id="get_excel_invoices_data_prompt" class="block mt-1 w-full h-48 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         name="get_excel_invoices_data_prompt">{{ old('get_excel_invoices_data_prompt', $config['get_excel_invoices_data_prompt']) }}</textarea>
                     <x-input-error :messages="$errors->get('get_excel_invoices_data_prompt')" class="mt-2" />
+                </div>
+
+                <div class="mb-8">
+                    <x-input-label for="first_table_title" :value="__('Título de la primera tabla')" />
+                    <x-text-input id="first_table_title"
+                        class="block mt-1 w-full"
+                        type="text"
+                        name="first_table_title"
+                        :value="old('first_table_title', $config['first_table_title'])" />
+                    <x-input-error :messages="$errors->get('first_table_title')" class="mt-2" />
                 </div>
 
                 <div class="mb-8">
@@ -139,12 +159,24 @@
 
                 <div class="mb-4 mt-10">
                     <label for="debug" class="inline-flex items-center">
-                        <input id="debug" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                        <input id="debug" type="checkbox"
+                            class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
                             name="debug"
                             {{ old('debug', $config['debug']) ? 'checked' : '' }}>
-                        <span class="ml-2 text-sm text-gray-600">{{ __('Modo debug') }}</span>
+                        <span class="ml-2 text-sm text-gray-700">{{ __('Modo debug') }}</span>
                     </label>
                     <x-input-error :messages="$errors->get('debug')" class="mt-2" />
+                </div>
+
+                <div class="mb-4">
+                    <label for="production" class="inline-flex items-center">
+                        <input id="production" type="checkbox"
+                            class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                            name="production"
+                            {{ old('production', $config['production']) ? 'checked' : '' }}>
+                        <span class="ml-2 text-sm text-gray-700">{{ __('Entorno de producción') }}</span>
+                    </label>
+                    <x-input-error :messages="$errors->get('production')" class="mt-2" />
                 </div>
             </form>
 

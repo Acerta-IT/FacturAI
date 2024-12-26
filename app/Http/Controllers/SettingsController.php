@@ -38,7 +38,9 @@ class SettingsController extends Controller
                 'sheet_names_values' => 'required|array',
                 'sheet_names_values.*' => 'required|string|min:1',
                 'header_row_key' => 'required|string',
-                'totals_row_key' => 'required|string'
+                'totals_row_key' => 'required|string',
+                'public_files_path' => 'required|string|url',
+                'first_table_title' => 'required|string'
             ], [
                 'template_path.required' => 'Por favor, escribe la ruta de la plantilla.',
                 'template_path.string' => 'Por favor, escribe una ruta válida para la plantilla.',
@@ -63,7 +65,12 @@ class SettingsController extends Controller
                 'header_row_key.required' => 'Por favor, escribe una clave para la fila de encabezado.',
                 'header_row_key.string' => 'La clave no es válida.',
                 'totals_row_key.required' => 'Por favor, escribe una clave para la fila de totales.',
-                'totals_row_key.string' => 'La clave no es válida.'
+                'totals_row_key.string' => 'La clave no es válida.',
+                'public_files_path.required' => 'Por favor, escribe una ruta para los archivos públicos.',
+                'public_files_path.string' => 'La ruta no es válida.',
+                'public_files_path.url' => 'La ruta no es válida.',
+                'first_table_title.required' => 'Por favor, escribe un título para la primera tabla.',
+                'first_table_title.string' => 'El título no es válido.'
             ]);
 
             // Read current config to maintain structure
@@ -78,9 +85,14 @@ class SettingsController extends Controller
             $config['get_excel_invoices_data_prompt'] = $validated['get_excel_invoices_data_prompt'];
             $config['header_row_key'] = $validated['header_row_key'];
             $config['totals_row_key'] = $validated['totals_row_key'];
+            $config['public_files_path'] = $validated['public_files_path'];
+            $config['first_table_title'] = $validated['first_table_title'];
 
             // Set debug to true if checked, false if not present
             $config['debug'] = $request->has('debug');
+
+            // Set production to true if checked, false if not present
+            $config['production'] = $request->has('production');
 
             // Update excel_invoices_table_mappings
             $mappings = [];
