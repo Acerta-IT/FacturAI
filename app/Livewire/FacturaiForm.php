@@ -71,13 +71,34 @@ class FacturaiForm extends Component
         $this->validate();
 
         try {
+            // Check if AnexoII exists in the uploaded files
+            $anexoFound = false;
+            $config_file = json_decode(File::get(config("facturai.config_path")), true);
+            $anexoName = $config_file["excel_input_name"];
+
+            foreach ($this->filePaths as $filePath) {
+                if (File::exists($filePath) && str_contains(basename($filePath), $anexoName)) {
+                    $anexoFound = true;
+                    break;
+                }
+            }
+
+            if (!$anexoFound) {
+                $this->dispatch('show-toast', [
+                    'message' => 'No se ha encontrado ningún archivo llamado ' . $anexoName,
+                    'class' => 'toast-danger'
+                ]);
+                return;
+            }
+
             // Create a permanent directory in public/files/{projectId}
             $project_dir = public_path('files/' . $this->projectId);
 
-            // Ensure the directory exists
-            if (!File::exists($project_dir)) {
-                File::makeDirectory($project_dir, 0755, true);
+            // Ensure the directory exists and is empty
+            if (File::exists($project_dir)) {
+                File::deleteDirectory($project_dir, false);
             }
+            File::makeDirectory($project_dir, 0755, true);
 
             // Copy files from temp to permanent directory
             foreach ($this->filePaths as $filePath) {
@@ -112,7 +133,7 @@ class FacturaiForm extends Component
             Log::error('Error in execute: ' . $e->getMessage());
             $this->dispatch('show-toast', [
                 'message' => $e->getMessage(),
-                'class' => 'toast-error'
+                'class' => 'toast-danger'
             ]);
         }
     }

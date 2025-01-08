@@ -19,16 +19,6 @@
                 @endif --}}
 
                 <div class="mb-4">
-                    <x-input-label for="public_files_path" :value="__('Ruta pública de archivos')" />
-                    <x-text-input id="public_files_path"
-                        class="block mt-1 w-full"
-                        type="text"
-                        name="public_files_path"
-                        :value="old('public_files_path', $config['public_files_path'])" />
-                    <x-input-error :messages="$errors->get('public_files_path')" class="mt-2" />
-                </div>
-
-                <div class="mb-4">
                     <x-input-label for="template_path" :value="__('Ruta de la plantilla de los Regsitros Primarios')" />
                     <x-text-input id="template_path" class="block mt-1 w-full"
                         type="text"
@@ -148,13 +138,34 @@
                     <x-input-error :messages="$errors->get('header_row_key')" class="mt-2" />
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-8">
                     <x-input-label for="totals_row_key" :value="__('Totals row key')" />
                     <x-text-input id="totals_row_key" class="block mt-1 w-full"
                         type="text"
                         name="totals_row_key"
                         :value="old('totals_row_key', $config['totals_row_key'])" />
                     <x-input-error :messages="$errors->get('totals_row_key')" class="mt-2" />
+                </div>
+
+                <div class="mb-2">
+                    <label for="production" class="inline-flex items-center">
+                        <input id="production" type="checkbox"
+                            class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                            name="production"
+                            {{ old('production', $config['production']) ? 'checked' : '' }}>
+                        <span class="ml-2 text-sm text-gray-700">{{ __('Entorno de producción') }}</span>
+                    </label>
+                    <x-input-error :messages="$errors->get('production')" class="mt-2" />
+                </div>
+
+                <div class="mb-4">
+                    <x-input-label for="public_files_path" :value="__('Ruta pública de archivos')" />
+                    <x-text-input id="public_files_path"
+                        class="block mt-1 w-full"
+                        type="text"
+                        name="public_files_path"
+                        :value="old('public_files_path', $config['public_files_path'])" />
+                    <x-input-error :messages="$errors->get('public_files_path')" class="mt-2" />
                 </div>
 
                 <div class="mb-4 mt-10">
@@ -166,17 +177,6 @@
                         <span class="ml-2 text-sm text-gray-700">{{ __('Modo debug') }}</span>
                     </label>
                     <x-input-error :messages="$errors->get('debug')" class="mt-2" />
-                </div>
-
-                <div class="mb-4">
-                    <label for="production" class="inline-flex items-center">
-                        <input id="production" type="checkbox"
-                            class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
-                            name="production"
-                            {{ old('production', $config['production']) ? 'checked' : '' }}>
-                        <span class="ml-2 text-sm text-gray-700">{{ __('Entorno de producción') }}</span>
-                    </label>
-                    <x-input-error :messages="$errors->get('production')" class="mt-2" />
                 </div>
             </form>
 

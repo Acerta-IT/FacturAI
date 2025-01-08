@@ -10,7 +10,7 @@
             <p>Creado</p>
         </div>
         <div class="w-1/5 text-center">
-            <p>En ejecución</p>
+            <p>Progreso</p>
         </div>
         <div class="w-1/5 text-center">
             <p>Acciones</p>
@@ -29,7 +29,21 @@
                 <p>{{ date('d-m-Y H:i', strtotime($job->created_at)) }}</p>
             </div>
             <div class="w-1/5 text-center">
-                <p>{{ $job->processing ? 'Sí' : 'No' }}</p>
+                @if($job->processing && $job->progress)
+                    <div wire:poll.1s class="flex items-center gap-2">
+                        <div class="flex-1 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                            <div class="bg-blue-600 h-2.5 rounded-full transition-all"
+                                 style="width: {{ $job->progress['percentage'] }}%">
+                            </div>
+                            <input type="hidden" value="{{ $job->progress['current'] }}/{{ $job->progress['total'] }}">
+                        </div>
+                        <p class="text-sm whitespace-nowrap">
+                            {{ floor($job->progress['percentage']) }}%
+                        </p>
+                    </div>
+                @else
+                    <p>-</p>
+                @endif
             </div>
             <div class="w-1/5 text-center">
                 @if(!$job->processing)

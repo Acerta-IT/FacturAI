@@ -8,12 +8,13 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\FacturAIController;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
 use App\Events\JobListUpdateEvent;
 use App\Events\CompletedJobListUpdateEvent;
+use App\Events\JobProcessingEvent;
+use Illuminate\Support\Facades\Redis;
 
 class RunPythonScript implements ShouldQueue
 {
@@ -25,16 +26,15 @@ class RunPythonScript implements ShouldQueue
         public string $outputFilename,
         public string $projectId
     ) {
-        Log::info('a - Inside constructor');
-        Log::info('a - Temp dir: ' . $projectDir);
-        Log::info('a - Client name: ' . $clientName);
-        Log::info('a - Output filename: ' . $outputFilename);
-        Log::info('a - Project ID: ' . $projectId);
+        Log::info("Job for project: " . $projectId . " created");
     }
 
     public function handle()
     {
         try {
+            // Broadcast that the job started processing
+            event(new JobProcessingEvent($this->projectId));
+
             // Access job information
             $jobId = $this->job->getJobId();
             $job = DB::table('jobs')
@@ -50,8 +50,7 @@ class RunPythonScript implements ShouldQueue
                 'project_id' => $this->projectId
             ]);
 
-            $controller = new FacturAIController();
-            $controller->execute($this->projectDir, $this->clientName, $this->projectId);
+            $this->execute($this->projectDir, $this->clientName, $this->projectId);
 
             DB::table('completed_jobs')->insert([
                 'client_name' => $this->clientName,
@@ -68,6 +67,86 @@ class RunPythonScript implements ShouldQueue
         } finally {
             event(new JobListUpdateEvent());
             event(new CompletedJobListUpdateEvent());
+
+            // if redis key exists, delete them
+            Redis::del("job:$this->projectId:current");
+            Redis::del("job:$this->projectId:total");
+
         }
+    }
+
+    public function execute($project_dir, $client_name, $project_id)
+    {
+        try {
+            // Update the config with the project directory
+            $this->updateConfig($project_dir, $client_name, $project_id);
+
+            // Execute the Python script
+            $command = sprintf(
+                '%s "%s" 2>&1',
+                config("facturai.python_command"),
+                config("facturai.script_path")
+            );
+
+            $scriptOutput = [];
+            $scriptResult = -1;
+            exec($command, $scriptOutput, $scriptResult);
+
+            // Log all Python output
+            Log::info('----- Output from script -----');
+            foreach ($scriptOutput as $line) {
+                Log::info('Python output: ' . $line);
+            }
+            Log::info('----- End of output from script -----');
+
+            // Check if the script executed successfully
+            if ($scriptResult === 0) {
+                // Prepare the file for download
+                $config = json_decode(File::get(config("facturai.config_path")), true);
+                $filename = $project_id . '_' . $config['excel_output_name'] . '.xlsx';
+                $outputFilePath = $project_dir . '/' . $filename;
+
+                // Check if the output file exists
+                if (File::exists($outputFilePath)) {
+                    Log::info('Output file exists: ' . $outputFilePath);
+                    // Move the file to a permanent location (e.g., public directory)
+                    $permanentFilePath = public_path('downloads/' . $filename);
+                    File::copy($outputFilePath, $permanentFilePath);
+
+                    // Return the file for download
+                    return response()->download($permanentFilePath);
+                } else {
+                    Log::info('Output file does not exist: ' . $outputFilePath);
+                    return redirect()->route('facturai.index')->with('status', [
+                        'message' => 'El archivo de salida no se ha podido generar.',
+                        'class' => 'toast-danger'
+                    ]);
+                }
+            } else {
+                return redirect()->route('facturai.index')->with('status', [
+                    'message' => 'Error al ejecutar el programa',
+                    'class' => 'toast-danger'
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            return redirect()->route('facturai.index')->with('status', [
+                'message' => 'Error al ejecutar el programa: ' . $e->getMessage(),
+                'class' => 'toast-danger'
+            ]);
+        }
+    }
+
+    private function updateConfig($project_dir, $clientName, $projectId)
+    {
+        // Read the current config
+        $config = json_decode(File::get(config("facturai.config_path")), true);
+
+        // Update the directory path and client name
+        $config['directory_path'] = $project_dir;
+        $config['client_name'] = $clientName;
+        $config['project_id'] = $projectId;
+        // Save the updated config
+        File::put(config("facturai.config_path"), json_encode($config, JSON_PRETTY_PRINT));
     }
 }
