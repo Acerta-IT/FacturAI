@@ -32,9 +32,10 @@
                 <p>{{ \Carbon\Carbon::parse($job->reserved_at)->diffForHumans($job->completed_at, true) }}</p>
             </div>
             <div class="w-1/5 text-center">
-                @if($job->downloadUrl)
+                @if($job->existsResultFile())
                     <div class="flex justify-center">
-                        <a href="{{ asset($job->downloadUrl) }}" class="inline-flex items-center" download>
+                        <a href="{{ route('file.download', ['projectId' => $job->project_id, 'filename' => $job->output_filename]) }}"
+                           class="inline-flex items-center">
                             <x-icon-button icon="download"/>
                         </a>
                     </div>

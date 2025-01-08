@@ -7,13 +7,18 @@ use App\Http\Controllers\FacturAIController;
 use App\Http\Controllers\JobController;
 use App\Http\Middleware\Admin;
 use App\Http\Controllers\CompletedJobController;
-
+use App\Http\Controllers\FileController;
+use App\Http\Middleware\FileAccess;
 Route::middleware('auth')->group(function () {
     Route::get('/', function () {
         return redirect()->route('facturai.index');
     });
+
     Route::get('/facturai', [FacturAIController::class, 'index'])->name('facturai.index');
     Route::post('/facturai/execute', [FacturAIController::class, 'execute'])->name('facturai.execute');
+
+    Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
+    Route::get('/completedJobs', [CompletedJobController::class, 'index'])->name('completedJobs.index');
 
     Route::middleware(Admin::class)->group(function () {
 
@@ -27,6 +32,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
         Route::post('/settings/reset', [SettingsController::class, 'reset'])->name('settings.reset');
         Route::post('/settings/save-default', [SettingsController::class, 'saveDefault'])->name('settings.saveDefault');
+
+        Route::post('/completed-jobs/clean', [CompletedJobController::class, 'clean'])->name('completed-jobs.clean');
+    });
+
+    Route::middleware(FileAccess::class)->group(function () {
+        Route::get('/download/{projectId}/{filename}', [FileController::class, 'download'])
+        ->name('file.download');
     });
 
     // Managing 404 errors
@@ -36,11 +48,6 @@ Route::middleware('auth')->group(function () {
             'class' => 'toast-danger'
         ]);
     });
-
-    Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
-    Route::get('/completedJobs', [CompletedJobController::class, 'index'])->name('completedJobs.index');
-
-
 });
 
 require __DIR__ . '/auth.php';

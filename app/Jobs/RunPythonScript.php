@@ -99,36 +99,6 @@ class RunPythonScript implements ShouldQueue
             }
             Log::info('----- End of output from script -----');
 
-            // Check if the script executed successfully
-            if ($scriptResult === 0) {
-                // Prepare the file for download
-                $config = json_decode(File::get(config("facturai.config_path")), true);
-                $filename = $project_id . '_' . $config['excel_output_name'] . '.xlsx';
-                $outputFilePath = $project_dir . '/' . $filename;
-
-                // Check if the output file exists
-                if (File::exists($outputFilePath)) {
-                    Log::info('Output file exists: ' . $outputFilePath);
-                    // Move the file to a permanent location (e.g., public directory)
-                    $permanentFilePath = public_path('downloads/' . $filename);
-                    File::copy($outputFilePath, $permanentFilePath);
-
-                    // Return the file for download
-                    return response()->download($permanentFilePath);
-                } else {
-                    Log::info('Output file does not exist: ' . $outputFilePath);
-                    return redirect()->route('facturai.index')->with('status', [
-                        'message' => 'El archivo de salida no se ha podido generar.',
-                        'class' => 'toast-danger'
-                    ]);
-                }
-            } else {
-                return redirect()->route('facturai.index')->with('status', [
-                    'message' => 'Error al ejecutar el programa',
-                    'class' => 'toast-danger'
-                ]);
-            }
-
         } catch (\Exception $e) {
             return redirect()->route('facturai.index')->with('status', [
                 'message' => 'Error al ejecutar el programa: ' . $e->getMessage(),

@@ -15,11 +15,11 @@ class CompletedJob extends Model
         'completed_at'
     ];
 
-    protected $appends = ['downloadUrl'];
+    protected $fillable = ['project_id', 'client_name', 'created_at', 'reserved_at', 'completed_at', 'output_filename'];
 
-    public function getDownloadUrlAttribute()
+    public function existsResultFile()
     {
-        $filePath = public_path('downloads/' . $this->output_filename);
-        return File::exists($filePath) ? 'downloads/' . $this->output_filename : null;
+        $filePath = storage_path('app/projects/' . $this->project_id . '/' . $this->output_filename);
+        return File::exists($filePath);
     }
 }

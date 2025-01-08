@@ -91,12 +91,12 @@ class FacturaiForm extends Component
                 return;
             }
 
-            // Create a permanent directory in public/files/{projectId}
-            $project_dir = public_path('files/' . $this->projectId);
+            // Create a permanent directory in app/projects/{projectId}
+            $project_dir = storage_path('app/projects/' . $this->projectId);
 
             // Ensure the directory exists and is empty
             if (File::exists($project_dir)) {
-                File::deleteDirectory($project_dir, false);
+                File::deleteDirectory($project_dir);
             }
             File::makeDirectory($project_dir, 0755, true);
 
