@@ -23,10 +23,10 @@
             <div class="">
                 <label class="" for="term">Perfil:</label>
                 <select class="border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm"
-                        wire:model="rol">
+                        wire:model="role">
                     <option>Seleccionar</option>
 
-                    @foreach ($userRol as $role)
+                    @foreach ($userRoles as $role)
                         <option value="{{ $role->value }}">
                             {{ \App\enums\Role::tryFrom($role->value)?->label() ?? 'Unknown' }}</option>
                     @endforeach

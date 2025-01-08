@@ -20,10 +20,10 @@ class FilterUsers extends Component
     public function render()
     {
         $departments = Departments::cases();
-        $role = Role::cases();
+        $roles = Role::cases();
 
 
-        return view('livewire.filter-users', ['userDepartments' => $departments, 'userRol' => $role]);
+        return view('livewire.filter-users', ['userDepartments' => $departments, 'userRoles' => $roles]);
     }
 
 }
