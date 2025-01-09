@@ -32,7 +32,7 @@ class CleanProjects extends Command
             if (!$dir->isDir()) continue;
 
             $dirPath = $dir->getRealPath();
-            $dirTime = $dir->getCTime();
+            $dirTime = $dir->getMTime();
 
             if ($dirTime <= $dateToDelete) {
                 try {
@@ -48,6 +48,7 @@ class CleanProjects extends Command
         }
 
         $this->info("Cleaned {$count} old project folders");
+        Log::info("Cleaned {$count} old project folders with date previous to " . $dateFormatted);
         return 0;
     }
 }
