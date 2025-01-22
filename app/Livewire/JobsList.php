@@ -26,17 +26,20 @@ class JobsList extends Component
         $redis = Redis::connection('default');
         $key_current = "job:{$projectId}:current";
         $key_total = "job:{$projectId}:total";
+        $key_converting_html = "job:{$projectId}:converting_html";
 
         $current_raw = $redis->get($key_current);
         $total_raw = $redis->get($key_total);
+        $converting_html_raw = $redis->get($key_converting_html);
 
         $current = (int)($current_raw ?? 0);
         $total = (int)($total_raw ?? 1);
-
+        $converting_html = (bool)($converting_html_raw ?? false);
         return [
             'current' => $current,
             'total' => $total,
-            'percentage' => min(($current / $total) * 100, 100)
+            'percentage' => min(($current / $total) * 100, 100),
+            'converting_html' => $converting_html
         ];
     }
 

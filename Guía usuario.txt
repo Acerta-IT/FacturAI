@@ -1,0 +1,7 @@
+- La carpeta a subir debe tener el excel AnexoII y todas las facturas. El nombre del AnexoII puede cambiarse, pero deberán avisarme y será el mismo nombre para todos los usuarios
+
+- Se pueden añadir varios proyectos al programa, pero solo se ejecutarán de 1 en 1, por lo que hay una cola. Se pueden borrar proyectos de la cola excepto el que se esté ejecutando actualemente
+
+- Si alguna de las plantillas cambia, nos tienen que avisar para que veamos si afecta al programa. Si depende de ellos, que nos avisen antes de cambiarla
+
+- Si se ejecuta con un project_id que ya existía, se sobreescribirá el resultado, por lo que las 2 entradas que haya en Trabajos Completados descargaran el mismo excel

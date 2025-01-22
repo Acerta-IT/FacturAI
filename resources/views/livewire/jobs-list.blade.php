@@ -32,9 +32,16 @@
                 @if($job->processing && $job->progress)
                     <div wire:poll.1s class="flex items-center gap-2">
                         <div class="flex-1 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                            <div class="bg-blue-600 h-2.5 rounded-full transition-all"
-                                 style="width: {{ $job->progress['percentage'] }}%">
-                            </div>
+                            {{-- If converting html is true, the progrss bar is green --}}
+                            @if($job->progress['converting_html'])
+                                <div class="bg-green-500 h-2.5 rounded-full transition-all"
+                                     style="width: {{ $job->progress['percentage'] }}%">
+                                </div>
+                            @else
+                                <div class="bg-blue-600 h-2.5 rounded-full transition-all"
+                                     style="width: {{ $job->progress['percentage'] }}%">
+                                </div>
+                            @endif
                             <input type="hidden" value="{{ $job->progress['current'] }}/{{ $job->progress['total'] }}">
                         </div>
                         <p class="text-sm whitespace-nowrap">

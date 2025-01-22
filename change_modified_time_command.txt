@@ -1,1 +1,5 @@
+// Para windows (powershell)
 $(Get-Item "storage/app/projects/old_project_40_days1").LastWriteTime = (Get-Date).AddDays(-40)
+
+// Para linux
+touch -d "40 days ago" storage/app/projects/old_26_days

@@ -17,7 +17,7 @@ class Job extends Model
         'reserved_at' => 'datetime'
     ];
 
-    protected $appends = ['clientName', 'processing', 'projectId', 'progress'];
+    protected $appends = ['clientName', 'processing', 'projectId', 'progress', 'converting_html'];
 
     public function getClientNameAttribute()
     {
@@ -58,20 +58,21 @@ class Job extends Model
             try {
                 $key_current = "job:{$this->projectId}:current";
                 $key_total = "job:{$this->projectId}:total";
-
+                $key_converting_html = "job:{$this->projectId}:converting_html";
                 // Get raw values
                 $redis = Redis::connection('default');
                 $current_raw = $redis->get($key_current);
                 $total_raw = $redis->get($key_total);
-
+                $converting_html_raw = $redis->get($key_converting_html);
                 // Convert to integers, handling null values
                 $current = $current_raw !== null ? (int)$current_raw : 0;
                 $total = $total_raw !== null ? (int)$total_raw : 1;
-
+                $converting_html = $converting_html_raw !== null ? (bool)$converting_html_raw : false;
                 return [
                     'current' => $current,
                     'total' => $total,
-                    'percentage' => $total > 0 ? min(($current / $total) * 100, 100) : 0
+                    'percentage' => $total > 0 ? min(($current / $total) * 100, 100) : 0,
+                    'converting_html' => $converting_html
                 ];
             } catch (\Exception $e) {
                 Log::error('Redis error: ' . $e->getMessage(), [

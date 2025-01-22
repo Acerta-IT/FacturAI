@@ -1,0 +1,20 @@
+Configurar el .env
+
+Desplegar el repo
+
+Composer update, npm install, npm run build
+
+Copiar la carpeta src del repo del script en la carpeta public/script/
+Arreglar el config, sobre todo cambiar las urls y escaparlas
+
+Añadir la plantilla de registros primarios en public/script
+
+Instalar todas las dependencias y paquetes necesarios para el script de python
+- Instalar pdf kit y wkhtmltopdf
+https://github.com/JazzCore/python-pdfkit/wiki/Installing-wkhtmltopdf
+
+Instalar Redis
+apt install redis-server
+apt install redis-tools
+
+Habilitar las scheduled task y queue (seguir los pasos de la info)
