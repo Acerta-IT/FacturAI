@@ -20,6 +20,10 @@ class RunPythonScript implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $timeout = 18000;        // 5 hours in seconds
+    public $tries = 1;              // Only try once since it's a long job
+    public $failOnTimeout = true;   // Mark as failed if it times out
+
     public function __construct(
         public string $projectDir,
         public string $clientName,

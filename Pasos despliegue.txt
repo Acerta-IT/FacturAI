@@ -12,6 +12,8 @@ Añadir la plantilla de registros primarios en public/script
 Instalar todas las dependencias y paquetes necesarios para el script de python
 - Instalar pdf kit y wkhtmltopdf
 https://github.com/JazzCore/python-pdfkit/wiki/Installing-wkhtmltopdf
+- Instalar beautifulsoup
+pip install beautifulsoup4
 
 Instalar Redis
 apt install redis-server
